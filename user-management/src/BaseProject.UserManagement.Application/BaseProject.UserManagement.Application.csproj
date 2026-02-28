@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>BaseProject.UserManagement</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BaseProject.UserManagement.Domain\BaseProject.UserManagement.Domain.csproj" />
+    <ProjectReference Include="..\BaseProject.UserManagement.Application.Contracts\BaseProject.UserManagement.Application.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Identity.Application" Version="9.0.2" />
+    <PackageReference Include="Volo.Abp.Ddd.Application" Version="9.0.2" />
+    <PackageReference Include="Volo.Abp.AutoMapper" Version="9.0.2" />
+    <PackageReference Include="Google.Apis.Auth" Version="1.68.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.3.0" />
+  </ItemGroup>
+
+</Project>
