@@ -1,4 +1,8 @@
-# IDE
+# ========================================
+# Base Project Monorepo — .gitignore
+# ========================================
+
+# --- IDE ---
 .vscode/
 .vs/
 .idea/
@@ -6,6 +10,28 @@
 *.swo
 *~
 
-# OS
+# --- OS ---
 .DS_Store
 Thumbs.db
+
+# --- .NET ---
+**/bin/
+**/obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+Logs/
+
+# --- Node.js ---
+**/node_modules/
+**/dist/
+**/.env.local
+**/.env.*.local
+
+# --- Docker ---
+**/docker-data/
+
+# --- Build outputs ---
+**/publish/
+**/out/

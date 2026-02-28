@@ -1,0 +1,22 @@
+# ---- User Management DbMigrator ----
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+
+# Copy csproj files and restore
+COPY src/BaseProject.UserManagement.Domain.Shared/BaseProject.UserManagement.Domain.Shared.csproj src/BaseProject.UserManagement.Domain.Shared/
+COPY src/BaseProject.UserManagement.Domain/BaseProject.UserManagement.Domain.csproj src/BaseProject.UserManagement.Domain/
+COPY src/BaseProject.UserManagement.Application.Contracts/BaseProject.UserManagement.Application.Contracts.csproj src/BaseProject.UserManagement.Application.Contracts/
+COPY src/BaseProject.UserManagement.Application/BaseProject.UserManagement.Application.csproj src/BaseProject.UserManagement.Application/
+COPY src/BaseProject.UserManagement.EntityFrameworkCore/BaseProject.UserManagement.EntityFrameworkCore.csproj src/BaseProject.UserManagement.EntityFrameworkCore/
+COPY src/BaseProject.UserManagement.DbMigrator/BaseProject.UserManagement.DbMigrator.csproj src/BaseProject.UserManagement.DbMigrator/
+RUN dotnet restore src/BaseProject.UserManagement.DbMigrator/BaseProject.UserManagement.DbMigrator.csproj
+
+# Copy everything and build
+COPY . .
+RUN dotnet publish src/BaseProject.UserManagement.DbMigrator/BaseProject.UserManagement.DbMigrator.csproj -c Release -o /app/publish --no-restore
+
+# ---- Runtime ----
+FROM mcr.microsoft.com/dotnet/runtime:9.0
+WORKDIR /app
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "BaseProject.UserManagement.DbMigrator.dll"]

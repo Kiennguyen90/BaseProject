@@ -7,6 +7,9 @@ public class Program
 {
     public static async Task<int> Main(string[] args)
     {
+        // Allow DateTime with PostgreSQL
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
             .MinimumLevel.Override("Microsoft", LogEventLevel.Information)

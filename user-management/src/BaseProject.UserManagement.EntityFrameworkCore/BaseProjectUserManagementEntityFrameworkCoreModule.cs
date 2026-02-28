@@ -5,12 +5,16 @@ using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.PostgreSql;
 using Volo.Abp.Identity.EntityFrameworkCore;
 using Volo.Abp.Modularity;
+using Volo.Abp.PermissionManagement.EntityFrameworkCore;
+using Volo.Abp.SettingManagement.EntityFrameworkCore;
 
 namespace BaseProject.UserManagement.EntityFrameworkCore;
 
 [DependsOn(
     typeof(BaseProjectUserManagementDomainModule),
     typeof(AbpIdentityEntityFrameworkCoreModule),
+    typeof(AbpPermissionManagementEntityFrameworkCoreModule),
+    typeof(AbpSettingManagementEntityFrameworkCoreModule),
     typeof(AbpEntityFrameworkCorePostgreSqlModule)
 )]
 public class BaseProjectUserManagementEntityFrameworkCoreModule : AbpModule

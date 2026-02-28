@@ -4,6 +4,8 @@ using Volo.Abp.Data;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.Identity.EntityFrameworkCore;
+using Volo.Abp.PermissionManagement.EntityFrameworkCore;
+using Volo.Abp.SettingManagement.EntityFrameworkCore;
 
 namespace BaseProject.UserManagement.EntityFrameworkCore;
 
@@ -23,6 +25,12 @@ public class UserManagementDbContext : AbpDbContext<UserManagementDbContext>
 
         // Configure ABP Identity tables
         builder.ConfigureIdentity();
+
+        // Configure ABP PermissionManagement tables
+        builder.ConfigurePermissionManagement();
+
+        // Configure ABP SettingManagement tables
+        builder.ConfigureSettingManagement();
 
         // Configure UserProfile
         builder.Entity<UserProfile>(b =>

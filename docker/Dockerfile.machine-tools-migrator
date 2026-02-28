@@ -1,0 +1,22 @@
+# ---- Machine Tools DbMigrator ----
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+
+# Copy csproj files and restore
+COPY src/BaseProject.MachineTools.Domain.Shared/BaseProject.MachineTools.Domain.Shared.csproj src/BaseProject.MachineTools.Domain.Shared/
+COPY src/BaseProject.MachineTools.Domain/BaseProject.MachineTools.Domain.csproj src/BaseProject.MachineTools.Domain/
+COPY src/BaseProject.MachineTools.Application.Contracts/BaseProject.MachineTools.Application.Contracts.csproj src/BaseProject.MachineTools.Application.Contracts/
+COPY src/BaseProject.MachineTools.Application/BaseProject.MachineTools.Application.csproj src/BaseProject.MachineTools.Application/
+COPY src/BaseProject.MachineTools.EntityFrameworkCore/BaseProject.MachineTools.EntityFrameworkCore.csproj src/BaseProject.MachineTools.EntityFrameworkCore/
+COPY src/BaseProject.MachineTools.DbMigrator/BaseProject.MachineTools.DbMigrator.csproj src/BaseProject.MachineTools.DbMigrator/
+RUN dotnet restore src/BaseProject.MachineTools.DbMigrator/BaseProject.MachineTools.DbMigrator.csproj
+
+# Copy everything and build
+COPY . .
+RUN dotnet publish src/BaseProject.MachineTools.DbMigrator/BaseProject.MachineTools.DbMigrator.csproj -c Release -o /app/publish --no-restore
+
+# ---- Runtime ----
+FROM mcr.microsoft.com/dotnet/runtime:9.0
+WORKDIR /app
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "BaseProject.MachineTools.DbMigrator.dll"]

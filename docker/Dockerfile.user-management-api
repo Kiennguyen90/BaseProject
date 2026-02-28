@@ -1,0 +1,23 @@
+# ---- User Management API Host ----
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+
+# Copy csproj files and restore
+COPY src/BaseProject.UserManagement.Domain.Shared/BaseProject.UserManagement.Domain.Shared.csproj src/BaseProject.UserManagement.Domain.Shared/
+COPY src/BaseProject.UserManagement.Domain/BaseProject.UserManagement.Domain.csproj src/BaseProject.UserManagement.Domain/
+COPY src/BaseProject.UserManagement.Application.Contracts/BaseProject.UserManagement.Application.Contracts.csproj src/BaseProject.UserManagement.Application.Contracts/
+COPY src/BaseProject.UserManagement.Application/BaseProject.UserManagement.Application.csproj src/BaseProject.UserManagement.Application/
+COPY src/BaseProject.UserManagement.EntityFrameworkCore/BaseProject.UserManagement.EntityFrameworkCore.csproj src/BaseProject.UserManagement.EntityFrameworkCore/
+COPY src/BaseProject.UserManagement.HttpApi.Host/BaseProject.UserManagement.HttpApi.Host.csproj src/BaseProject.UserManagement.HttpApi.Host/
+RUN dotnet restore src/BaseProject.UserManagement.HttpApi.Host/BaseProject.UserManagement.HttpApi.Host.csproj
+
+# Copy everything and build
+COPY . .
+RUN dotnet publish src/BaseProject.UserManagement.HttpApi.Host/BaseProject.UserManagement.HttpApi.Host.csproj -c Release -o /app/publish --no-restore
+
+# ---- Runtime ----
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+WORKDIR /app
+EXPOSE 8080
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "BaseProject.UserManagement.HttpApi.Host.dll"]
