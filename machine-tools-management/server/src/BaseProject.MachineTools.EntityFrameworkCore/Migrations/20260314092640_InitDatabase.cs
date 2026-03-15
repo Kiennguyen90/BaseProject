@@ -6,13 +6,17 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BaseProject.MachineTools.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "machinetool");
+
             migrationBuilder.CreateTable(
                 name: "DeviceCategories",
+                schema: "machinetool",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -36,6 +40,7 @@ namespace BaseProject.MachineTools.Migrations
 
             migrationBuilder.CreateTable(
                 name: "DeviceTransactions",
+                schema: "machinetool",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -60,6 +65,7 @@ namespace BaseProject.MachineTools.Migrations
 
             migrationBuilder.CreateTable(
                 name: "EmployeeReferences",
+                schema: "machinetool",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -83,6 +89,7 @@ namespace BaseProject.MachineTools.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Devices",
+                schema: "machinetool",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -114,6 +121,7 @@ namespace BaseProject.MachineTools.Migrations
                     table.ForeignKey(
                         name: "FK_Devices_DeviceCategories_CategoryId",
                         column: x => x.CategoryId,
+                        principalSchema: "machinetool",
                         principalTable: "DeviceCategories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -121,6 +129,7 @@ namespace BaseProject.MachineTools.Migrations
 
             migrationBuilder.CreateTable(
                 name: "BorrowRequests",
+                schema: "machinetool",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -152,12 +161,14 @@ namespace BaseProject.MachineTools.Migrations
                     table.ForeignKey(
                         name: "FK_BorrowRequests_Devices_DeviceId",
                         column: x => x.DeviceId,
+                        principalSchema: "machinetool",
                         principalTable: "Devices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_BorrowRequests_EmployeeReferences_EmployeeId",
                         column: x => x.EmployeeId,
+                        principalSchema: "machinetool",
                         principalTable: "EmployeeReferences",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -165,6 +176,7 @@ namespace BaseProject.MachineTools.Migrations
 
             migrationBuilder.CreateTable(
                 name: "ReturnRequests",
+                schema: "machinetool",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -197,18 +209,21 @@ namespace BaseProject.MachineTools.Migrations
                     table.ForeignKey(
                         name: "FK_ReturnRequests_BorrowRequests_BorrowRequestId",
                         column: x => x.BorrowRequestId,
+                        principalSchema: "machinetool",
                         principalTable: "BorrowRequests",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ReturnRequests_Devices_DeviceId",
                         column: x => x.DeviceId,
+                        principalSchema: "machinetool",
                         principalTable: "Devices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ReturnRequests_EmployeeReferences_EmployeeId",
                         column: x => x.EmployeeId,
+                        principalSchema: "machinetool",
                         principalTable: "EmployeeReferences",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -216,6 +231,7 @@ namespace BaseProject.MachineTools.Migrations
 
             migrationBuilder.CreateTable(
                 name: "DeviceImages",
+                schema: "machinetool",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -234,96 +250,114 @@ namespace BaseProject.MachineTools.Migrations
                     table.ForeignKey(
                         name: "FK_DeviceImages_BorrowRequests_BorrowRequestId",
                         column: x => x.BorrowRequestId,
+                        principalSchema: "machinetool",
                         principalTable: "BorrowRequests",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_DeviceImages_Devices_DeviceId",
                         column: x => x.DeviceId,
+                        principalSchema: "machinetool",
                         principalTable: "Devices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_DeviceImages_ReturnRequests_ReturnRequestId",
                         column: x => x.ReturnRequestId,
+                        principalSchema: "machinetool",
                         principalTable: "ReturnRequests",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_BorrowRequests_DeviceId",
+                schema: "machinetool",
                 table: "BorrowRequests",
                 column: "DeviceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BorrowRequests_EmployeeId",
+                schema: "machinetool",
                 table: "BorrowRequests",
                 column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceCategories_Name",
+                schema: "machinetool",
                 table: "DeviceCategories",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceImages_BorrowRequestId",
+                schema: "machinetool",
                 table: "DeviceImages",
                 column: "BorrowRequestId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceImages_DeviceId",
+                schema: "machinetool",
                 table: "DeviceImages",
                 column: "DeviceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceImages_ReturnRequestId",
+                schema: "machinetool",
                 table: "DeviceImages",
                 column: "ReturnRequestId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Devices_CategoryId",
+                schema: "machinetool",
                 table: "Devices",
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Devices_Code",
+                schema: "machinetool",
                 table: "Devices",
                 column: "Code",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceTransactions_DeviceId",
+                schema: "machinetool",
                 table: "DeviceTransactions",
                 column: "DeviceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceTransactions_EmployeeId",
+                schema: "machinetool",
                 table: "DeviceTransactions",
                 column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceTransactions_TransactionDate",
+                schema: "machinetool",
                 table: "DeviceTransactions",
                 column: "TransactionDate");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeReferences_UserId",
+                schema: "machinetool",
                 table: "EmployeeReferences",
                 column: "UserId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ReturnRequests_BorrowRequestId",
+                schema: "machinetool",
                 table: "ReturnRequests",
                 column: "BorrowRequestId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ReturnRequests_DeviceId",
+                schema: "machinetool",
                 table: "ReturnRequests",
                 column: "DeviceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ReturnRequests_EmployeeId",
+                schema: "machinetool",
                 table: "ReturnRequests",
                 column: "EmployeeId");
         }
@@ -332,25 +366,32 @@ namespace BaseProject.MachineTools.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "DeviceImages");
+                name: "DeviceImages",
+                schema: "machinetool");
 
             migrationBuilder.DropTable(
-                name: "DeviceTransactions");
+                name: "DeviceTransactions",
+                schema: "machinetool");
 
             migrationBuilder.DropTable(
-                name: "ReturnRequests");
+                name: "ReturnRequests",
+                schema: "machinetool");
 
             migrationBuilder.DropTable(
-                name: "BorrowRequests");
+                name: "BorrowRequests",
+                schema: "machinetool");
 
             migrationBuilder.DropTable(
-                name: "Devices");
+                name: "Devices",
+                schema: "machinetool");
 
             migrationBuilder.DropTable(
-                name: "EmployeeReferences");
+                name: "EmployeeReferences",
+                schema: "machinetool");
 
             migrationBuilder.DropTable(
-                name: "DeviceCategories");
+                name: "DeviceCategories",
+                schema: "machinetool");
         }
     }
 }

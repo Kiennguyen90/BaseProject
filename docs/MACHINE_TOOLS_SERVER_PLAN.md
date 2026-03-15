@@ -675,7 +675,7 @@ services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 ### Database Connection
 ```
-Host=localhost;Port=5432;Database=BaseProject_MachineTools;Username=postgres;Password=postgres
+Host=localhost;Port=5433;Database=machinetools;Username=admin;Password=admin
 ```
 
 ### Ports

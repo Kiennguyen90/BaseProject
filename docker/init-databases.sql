@@ -7,5 +7,5 @@ SELECT 'CREATE DATABASE "BaseProject_UserManagement"'
 WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'BaseProject_UserManagement')\gexec
 
 -- Database for Machine Tools Management
-SELECT 'CREATE DATABASE "BaseProject_MachineTools"'
-WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'BaseProject_MachineTools')\gexec
+SELECT 'CREATE DATABASE "machinetools"'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'machinetools')\gexec

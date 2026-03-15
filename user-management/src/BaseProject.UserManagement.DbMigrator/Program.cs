@@ -12,7 +12,7 @@ Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
     .MinimumLevel.Override("Volo.Abp", LogEventLevel.Warning)
     .Enrich.FromLogContext()
-    .WriteTo.Console()
+    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
     .WriteTo.File("Logs/migrations-.log", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
@@ -41,4 +41,12 @@ catch (Exception ex)
 finally
 {
     await Log.CloseAndFlushAsync();
+
+    // Keep console window open so you can read the output in Visual Studio
+    if (Environment.UserInteractive && !Console.IsInputRedirected)
+    {
+        Console.WriteLine();
+        Console.WriteLine("Press any key to exit...");
+        Console.ReadKey(true);
+    }
 }

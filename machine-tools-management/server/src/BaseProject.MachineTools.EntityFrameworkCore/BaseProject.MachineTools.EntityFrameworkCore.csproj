@@ -24,4 +24,8 @@
     <ProjectReference Include="..\BaseProject.MachineTools.Domain\BaseProject.MachineTools.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

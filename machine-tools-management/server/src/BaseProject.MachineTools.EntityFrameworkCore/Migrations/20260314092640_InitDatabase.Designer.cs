@@ -13,14 +13,15 @@ using Volo.Abp.EntityFrameworkCore;
 namespace BaseProject.MachineTools.Migrations
 {
     [DbContext(typeof(MachineToolsDbContext))]
-    [Migration("20260228125221_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260314092640_InitDatabase")]
+    partial class InitDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("machinetool")
                 .HasAnnotation("_Abp_DatabaseProvider", EfCoreDatabaseProvider.PostgreSql)
                 .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
@@ -119,7 +120,7 @@ namespace BaseProject.MachineTools.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("BorrowRequests", (string)null);
+                    b.ToTable("BorrowRequests", "machinetool");
                 });
 
             modelBuilder.Entity("BaseProject.MachineTools.Borrowing.ReturnRequest", b =>
@@ -220,7 +221,7 @@ namespace BaseProject.MachineTools.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("ReturnRequests", (string)null);
+                    b.ToTable("ReturnRequests", "machinetool");
                 });
 
             modelBuilder.Entity("BaseProject.MachineTools.Devices.Device", b =>
@@ -322,7 +323,7 @@ namespace BaseProject.MachineTools.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("Devices", (string)null);
+                    b.ToTable("Devices", "machinetool");
                 });
 
             modelBuilder.Entity("BaseProject.MachineTools.Devices.DeviceCategory", b =>
@@ -389,7 +390,7 @@ namespace BaseProject.MachineTools.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("DeviceCategories", (string)null);
+                    b.ToTable("DeviceCategories", "machinetool");
                 });
 
             modelBuilder.Entity("BaseProject.MachineTools.Devices.DeviceImage", b =>
@@ -436,7 +437,7 @@ namespace BaseProject.MachineTools.Migrations
 
                     b.HasIndex("ReturnRequestId");
 
-                    b.ToTable("DeviceImages", (string)null);
+                    b.ToTable("DeviceImages", "machinetool");
                 });
 
             modelBuilder.Entity("BaseProject.MachineTools.Employees.EmployeeReference", b =>
@@ -499,7 +500,7 @@ namespace BaseProject.MachineTools.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("EmployeeReferences", (string)null);
+                    b.ToTable("EmployeeReferences", "machinetool");
                 });
 
             modelBuilder.Entity("BaseProject.MachineTools.Transactions.DeviceTransaction", b =>
@@ -563,7 +564,7 @@ namespace BaseProject.MachineTools.Migrations
 
                     b.HasIndex("TransactionDate");
 
-                    b.ToTable("DeviceTransactions", (string)null);
+                    b.ToTable("DeviceTransactions", "machinetool");
                 });
 
             modelBuilder.Entity("BaseProject.MachineTools.Borrowing.BorrowRequest", b =>

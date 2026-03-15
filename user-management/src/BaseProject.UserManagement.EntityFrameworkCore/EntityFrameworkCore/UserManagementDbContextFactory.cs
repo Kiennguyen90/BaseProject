@@ -11,7 +11,7 @@ public class UserManagementDbContextFactory : IDesignTimeDbContextFactory<UserMa
     public UserManagementDbContext CreateDbContext(string[] args)
     {
         var builder = new DbContextOptionsBuilder<UserManagementDbContext>()
-            .UseNpgsql("Host=localhost;Port=5432;Database=BaseProject_UserManagement;Username=postgres;Password=postgres");
+            .UseNpgsql("Host=localhost;Port=5432;Database=usermanagement;Username=admin;Password=admin");
 
         return new UserManagementDbContext(builder.Options);
     }

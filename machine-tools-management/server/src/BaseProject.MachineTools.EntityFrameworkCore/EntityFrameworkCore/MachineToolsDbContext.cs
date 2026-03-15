@@ -29,6 +29,8 @@ public class MachineToolsDbContext : AbpDbContext<MachineToolsDbContext>
     {
         base.OnModelCreating(builder);
 
+        builder.HasDefaultSchema("machinetool");
+
         builder.Entity<DeviceCategory>(b =>
         {
             b.ToTable("DeviceCategories");

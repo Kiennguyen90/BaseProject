@@ -3,16 +3,42 @@ using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Data;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.Modeling;
+using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
+using Volo.Abp.PermissionManagement;
 using Volo.Abp.PermissionManagement.EntityFrameworkCore;
+using Volo.Abp.SettingManagement;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
 
 namespace BaseProject.UserManagement.EntityFrameworkCore;
 
 [ConnectionStringName("Default")]
-public class UserManagementDbContext : AbpDbContext<UserManagementDbContext>
+public class UserManagementDbContext : AbpDbContext<UserManagementDbContext>,
+    IIdentityDbContext,
+    IPermissionManagementDbContext,
+    ISettingManagementDbContext
 {
+    // Custom
     public DbSet<UserProfile> UserProfiles { get; set; } = null!;
+
+    // IIdentityDbContext
+    public DbSet<IdentityUser> Users { get; set; } = null!;
+    public DbSet<IdentityRole> Roles { get; set; } = null!;
+    public DbSet<IdentityClaimType> ClaimTypes { get; set; } = null!;
+    public DbSet<OrganizationUnit> OrganizationUnits { get; set; } = null!;
+    public DbSet<IdentitySecurityLog> SecurityLogs { get; set; } = null!;
+    public DbSet<IdentityLinkUser> LinkUsers { get; set; } = null!;
+    public DbSet<IdentityUserDelegation> UserDelegations { get; set; } = null!;
+    public DbSet<IdentitySession> Sessions { get; set; } = null!;
+
+    // IPermissionManagementDbContext
+    public DbSet<PermissionGrant> PermissionGrants { get; set; } = null!;
+    public DbSet<PermissionGroupDefinitionRecord> PermissionGroups { get; set; } = null!;
+    public DbSet<PermissionDefinitionRecord> Permissions { get; set; } = null!;
+
+    // ISettingManagementDbContext
+    public DbSet<Setting> Settings { get; set; } = null!;
+    public DbSet<SettingDefinitionRecord> SettingDefinitionRecords { get; set; } = null!;
 
     public UserManagementDbContext(DbContextOptions<UserManagementDbContext> options)
         : base(options)
@@ -23,16 +49,12 @@ public class UserManagementDbContext : AbpDbContext<UserManagementDbContext>
     {
         base.OnModelCreating(builder);
 
-        // Configure ABP Identity tables
+        builder.HasDefaultSchema("usermanagement");
+
         builder.ConfigureIdentity();
-
-        // Configure ABP PermissionManagement tables
         builder.ConfigurePermissionManagement();
-
-        // Configure ABP SettingManagement tables
         builder.ConfigureSettingManagement();
 
-        // Configure UserProfile
         builder.Entity<UserProfile>(b =>
         {
             b.ToTable("AppUserProfiles");

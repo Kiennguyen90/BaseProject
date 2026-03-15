@@ -126,6 +126,7 @@ public class BaseProjectUserManagementHttpApiHostModule : AbpModule
         app.UseCors();
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseSwagger();
         app.UseAbpSwaggerUI(options =>
         {
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "User Management API");

@@ -11,6 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 import { deviceApi } from '../../api/deviceApi';
 import { DeviceStatus, DeviceType } from '../../types/device.types';
 import type { DeviceStackScreenProps } from '../../types/navigation.types';
+import { useAuth } from '../../contexts/AuthContext';
 
 type Props = DeviceStackScreenProps<'DeviceDetail'>;
 
@@ -24,6 +25,8 @@ const statusLabel: Record<number, string> = {
 
 const DeviceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
   const { deviceId } = route.params;
+  const { user } = useAuth();
+  const isEmployee = user?.role !== 'Admin';
 
   const { data: device, isLoading } = useQuery({
     queryKey: ['devices', deviceId],
@@ -71,7 +74,7 @@ const DeviceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
         )}
       </View>
 
-      {device.status === DeviceStatus.Available && device.availableQuantity > 0 && (
+      {isEmployee && device.status === DeviceStatus.Available && device.availableQuantity > 0 && (
         <TouchableOpacity
           style={styles.borrowButton}
           onPress={() => {

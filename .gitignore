@@ -6,6 +6,7 @@
 .vscode/
 .vs/
 .idea/
+.claude/
 *.swp
 *.swo
 *~
@@ -21,6 +22,7 @@ Thumbs.db
 *.suo
 *.userosscache
 *.sln.docstates
+*.bin
 Logs/
 
 # --- Node.js ---
@@ -35,3 +37,11 @@ Logs/
 # --- Build outputs ---
 **/publish/
 **/out/
+
+# --- React Native / Android ---
+**/android/.gradle/
+**/android/build/
+**/android/app/build/
+**/android/.cxx/
+**/android/app/.cxx/
+**/android/local.properties

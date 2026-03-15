@@ -27,6 +27,9 @@ public class BaseProjectUserManagementEntityFrameworkCoreModule : AbpModule
         context.Services.AddAbpDbContext<UserManagementDbContext>(options =>
         {
             options.AddDefaultRepositories(includeAllEntities: true);
+            options.ReplaceDbContext<IIdentityDbContext>();
+            options.ReplaceDbContext<IPermissionManagementDbContext>();
+            options.ReplaceDbContext<ISettingManagementDbContext>();
         });
 
         // Register custom repositories

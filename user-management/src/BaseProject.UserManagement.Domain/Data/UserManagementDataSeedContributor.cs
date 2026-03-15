@@ -32,25 +32,34 @@ public class UserManagementDataSeedContributor : IDataSeedContributor, ITransien
 
     private async Task SeedRolesAsync()
     {
-        if (await _roleRepository.FindByNormalizedNameAsync(RoleConsts.Admin.ToUpperInvariant()) == null)
+        var adminRole = await _roleRepository.FindByNormalizedNameAsync(RoleConsts.Admin.ToUpperInvariant());
+        if (adminRole == null)
         {
-            var adminRole = new IdentityRole(Guid.NewGuid(), RoleConsts.Admin)
+            await _roleManager.CreateAsync(new IdentityRole(Guid.NewGuid(), RoleConsts.Admin)
             {
                 IsStatic = true,
                 IsPublic = true
-            };
-            await _roleManager.CreateAsync(adminRole);
+            });
+        }
+        else if (adminRole.Name != RoleConsts.Admin)
+        {
+            // ABP default seeder creates "admin" (lowercase) — rename to match RoleConsts
+            await _roleManager.SetRoleNameAsync(adminRole, RoleConsts.Admin);
         }
 
-        if (await _roleRepository.FindByNormalizedNameAsync(RoleConsts.Employee.ToUpperInvariant()) == null)
+        var employeeRole = await _roleRepository.FindByNormalizedNameAsync(RoleConsts.Employee.ToUpperInvariant());
+        if (employeeRole == null)
         {
-            var employeeRole = new IdentityRole(Guid.NewGuid(), RoleConsts.Employee)
+            await _roleManager.CreateAsync(new IdentityRole(Guid.NewGuid(), RoleConsts.Employee)
             {
                 IsStatic = true,
                 IsPublic = true,
                 IsDefault = true
-            };
-            await _roleManager.CreateAsync(employeeRole);
+            });
+        }
+        else if (employeeRole.Name != RoleConsts.Employee)
+        {
+            await _roleManager.SetRoleNameAsync(employeeRole, RoleConsts.Employee);
         }
     }
 
@@ -60,17 +69,36 @@ public class UserManagementDataSeedContributor : IDataSeedContributor, ITransien
         const string adminEmail = "admin@baseproject.com";
         const string adminPassword = "Admin@123456";
 
-        var existingUser = await _userManager.FindByNameAsync(adminUserName);
-        if (existingUser != null) return;
+        var adminUser = await _userManager.FindByNameAsync(adminUserName);
 
-        var adminUser = new IdentityUser(Guid.NewGuid(), adminUserName, adminEmail);
-        adminUser.SetPhoneNumber("0900000000", true);
+        if (adminUser == null)
+        {
+            adminUser = new IdentityUser(Guid.NewGuid(), adminUserName, adminEmail);
+            adminUser.SetPhoneNumber("0900000000", true);
 
-        var result = await _userManager.CreateAsync(adminUser, adminPassword);
-        if (result.Succeeded)
+            var result = await _userManager.CreateAsync(adminUser, adminPassword);
+            if (!result.Succeeded) return;
+        }
+        else
+        {
+            // ABP's default IdentityDataSeedContributor seeds admin@abp.io — override it
+            if (!string.Equals(adminUser.Email, adminEmail, StringComparison.OrdinalIgnoreCase))
+            {
+                await _userManager.SetEmailAsync(adminUser, adminEmail);
+            }
+
+            await _userManager.RemovePasswordAsync(adminUser);
+            await _userManager.AddPasswordAsync(adminUser, adminPassword);
+        }
+
+        if (!await _userManager.IsInRoleAsync(adminUser, RoleConsts.Admin))
         {
             await _userManager.AddToRoleAsync(adminUser, RoleConsts.Admin);
+        }
 
+        var existingProfile = await _profileRepository.FindByUserIdAsync(adminUser.Id);
+        if (existingProfile == null)
+        {
             var profile = new Users.UserProfile(
                 Guid.NewGuid(),
                 adminUser.Id,

@@ -28,21 +28,53 @@ public class DbMigratorHostedService : IHostedService
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("=== UserManagement DbMigrator Started ===");
+        _logger.LogInformation("Environment: {Env}", Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production");
+        _logger.LogInformation("Working directory: {Dir}", Directory.GetCurrentDirectory());
 
         try
         {
             // Step 1: Apply EF Core migrations BEFORE ABP initialization
             // ABP modules (PermissionManagement, SettingManagement) query their tables during init,
             // so tables must exist before ABP bootstraps.
-            _logger.LogInformation("Applying database migrations...");
             var connectionString = _configuration.GetConnectionString("Default");
 
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                _logger.LogError("Connection string 'Default' is NULL or EMPTY! Check appsettings.json.");
+                throw new InvalidOperationException(
+                    "Connection string 'Default' is not configured. " +
+                    "Ensure appsettings.json exists in the working directory and contains ConnectionStrings:Default.");
+            }
+
+            // Mask password for logging
+            var maskedCs = MaskConnectionString(connectionString);
+            _logger.LogInformation("Connection string: {ConnectionString}", maskedCs);
+
+            _logger.LogInformation("Applying database migrations...");
             var optionsBuilder = new DbContextOptionsBuilder<UserManagementDbContext>();
             optionsBuilder.UseNpgsql(connectionString);
 
             await using (var dbContext = new UserManagementDbContext(optionsBuilder.Options))
             {
+                // Log pending migrations
+                var pending = await dbContext.Database.GetPendingMigrationsAsync(cancellationToken);
+                var pendingList = pending.ToList();
+
+                if (pendingList.Count == 0)
+                {
+                    _logger.LogInformation("No pending migrations — database schema is up to date.");
+                }
+                else
+                {
+                    _logger.LogInformation("Pending migrations ({Count}): {Migrations}",
+                        pendingList.Count, string.Join(", ", pendingList));
+                }
+
                 await dbContext.Database.MigrateAsync(cancellationToken);
+
+                // Verify tables were created
+                var applied = await dbContext.Database.GetAppliedMigrationsAsync(cancellationToken);
+                _logger.LogInformation("Total applied migrations: {Count}", applied.Count());
             }
             _logger.LogInformation("Database migrations applied successfully!");
 
@@ -66,7 +98,7 @@ public class DbMigratorHostedService : IHostedService
             }
             _logger.LogInformation("Seed data applied successfully!");
 
-            _logger.LogInformation("=== UserManagement DbMigrator Completed ===");
+            _logger.LogInformation("=== UserManagement DbMigrator Completed Successfully ===");
 
             await application.ShutdownAsync();
         }
@@ -82,5 +114,19 @@ public class DbMigratorHostedService : IHostedService
     public Task StopAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
+    }
+
+    private static string MaskConnectionString(string cs)
+    {
+        // Mask the password in connection string for safe logging
+        var parts = cs.Split(';');
+        for (int i = 0; i < parts.Length; i++)
+        {
+            if (parts[i].TrimStart().StartsWith("Password", StringComparison.OrdinalIgnoreCase))
+            {
+                parts[i] = "Password=***";
+            }
+        }
+        return string.Join(";", parts);
     }
 }
